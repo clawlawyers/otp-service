@@ -5,8 +5,10 @@ const connectToMongo  = require("./db");
 var jwt = require("jsonwebtoken");
 var cors = require("cors");
 const { sendMobileOtp } = require("./utils")
+const otpAuth = require("./mddleware")
 
-const JWT_SECRET = "abcdefghijk1234@#";
+
+const JWT_SECRET = process.env.JWT_SECRET;
 const PORT = process.env.PORT;
 
 
@@ -16,8 +18,10 @@ app.use(express.json());
 
 
 
+
 app.post(
     "/generateOTPmobile",
+  
     [
       body("phone", "Enter a valid phone ").isNumeric().isLength({
         min: 10,
@@ -60,10 +64,18 @@ app.post(
       
    
       var isSent = sendMobileOtp( phone, otp );
+
     
       if (isSent) {
-        return res.send(200);
+        const data = {
+          user: {
+            phone:phone,
+          },
+        };
+        const authtoken = jwt.sign(data, JWT_SECRET);
+       return res.status(200).json({ authtoken: authtoken });
       }
+      return res.status(400);
     } catch (e) {
       console.log(e);
       return res.send(500);
@@ -72,13 +84,16 @@ app.post(
   );
 
 
-app.post("/verifyotpmobile", [
+app.post("/verifyotpmobile",otpAuth, [
   body("phone", "Enter a valid email").isNumeric().isLength({
     min: 10,
     max: 10,
   }),
   body("otp", "Otp cannot be blank").exists(),
 ], async (req, res) => { try {
+
+
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -98,11 +113,16 @@ app.post("/verifyotpmobile", [
   else{
     await OtpMobile.findByIdAndDelete(user.id)
   }
-  
-
-  res.status(200).json({ message: "number sucessfully verified" });
+  const data = {
+    
+      phone:phone,
+      verified:true
+    
+  };
+  const authtoken = jwt.sign(data, JWT_SECRET);
+   return res.status(200).json({authtoken:authtoken  });
 } catch (error) {
-  res.status(400).json({ error: "server error" });
+  return res.status(400).json({ error: "server error" });
 }
 })
 

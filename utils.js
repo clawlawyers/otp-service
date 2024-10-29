@@ -11,6 +11,7 @@ const sendMobileOtp = async (phone, otp) => {
 
   try {
     const response = await fast2sms.sendMessage(options);
+    console.log(response)
     if (response.status_code === 200) {
       return { success: true, message: 'OTP sent successfully' };
     } else {
