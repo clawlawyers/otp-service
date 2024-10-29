@@ -7,7 +7,7 @@ var cors = require("cors");
 const { sendMobileOtp } = require("./utils")
 
 const JWT_SECRET = "abcdefghijk1234@#";
-const PORT = 7000;
+const PORT = process.env.PORT;
 
 
 const app = express();
