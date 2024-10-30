@@ -22,4 +22,26 @@ const sendMobileOtp = async (phone, otp) => {
   }
 };
 
-module.exports = { sendMobileOtp }; // Use module.exports to export the function
+
+const sendBulkSMS = async ( otp, numbers) => {
+  const message = `${otp} is your verfication code for CLAWLAW`
+
+  const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${process.env.FAST2SMS_API_KEY}&message=${encodeURIComponent(message)}&language=english&route=q&numbers=${numbers.join(',')}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+    });
+    const data = await response.json();
+    
+    if (response.ok) {
+      return { success: true, data };
+    } else {
+      return { success: false, error: data.message || 'Failed to send SMS' };
+    }
+  } catch (error) {
+    return { success: false, error: error.message || 'An error occurred' };
+  }
+};
+
+module.exports = { sendMobileOtp, sendBulkSMS }; // Use module.exports to export the function

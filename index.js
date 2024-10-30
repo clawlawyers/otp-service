@@ -4,7 +4,7 @@ const OtpMobile = require("./models/MobileOtp");
 const connectToMongo  = require("./db");
 var jwt = require("jsonwebtoken");
 var cors = require("cors");
-const { sendMobileOtp } = require("./utils")
+const { sendMobileOtp ,sendBulkSMS} = require("./utils")
 const otpAuth = require("./mddleware")
 
 
@@ -63,7 +63,7 @@ app.post(
        
       
    
-      var isSent = sendMobileOtp( phone, otp );
+      var isSent = sendBulkSMS(  otp , [phone]);
 
     
       if (isSent) {
