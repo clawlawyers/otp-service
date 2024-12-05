@@ -1,8 +1,6 @@
 const fast2sms = require("fast-two-sms");
 
-
 const sendMobileOtp = async (phone, otp) => {
-
   const options = {
     authorization: process.env.FAST2SMS_API_KEY, // Use an environment variable
     message: `Your verification code is ${otp}`,
@@ -11,36 +9,43 @@ const sendMobileOtp = async (phone, otp) => {
 
   try {
     const response = await fast2sms.sendMessage(options);
-    console.log(response)
+    console.log(response);
     if (response.status_code === 200) {
-      return { success: true, message: 'OTP sent successfully' };
+      return { success: true, message: "OTP sent successfully" };
     } else {
-      return { success: false, message: response.message || 'Failed to send OTP' };
+      return {
+        success: false,
+        message: response.message || "Failed to send OTP",
+      };
     }
   } catch (error) {
-    return { success: false, message: error.message || 'An error occurred' };
+    return { success: false, message: error.message || "An error occurred" };
   }
 };
 
+const sendBulkSMS = async (otp, website, numbers) => {
+  const message = `${otp} is your verfication code for CLAWLAW`;
 
-const sendBulkSMS = async ( otp, numbers) => {
-  const message = `${otp} is your verfication code for CLAWLAW`
-
-  const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${process.env.FAST2SMS_API_KEY}&message=${encodeURIComponent(message)}&language=english&route=q&numbers=${numbers.join(',')}`;
+  // const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${
+  //   process.env.FAST2SMS_API_KEY
+  // }&message=${encodeURIComponent(
+  //   message
+  // )}&language=english&route=q&numbers=${numbers.join(",")}`;
+  const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${process.env.FAST2SMS_API_KEY}&sender_id=CLAWLG&message=176131&variables_values=${website}|${otp}&route=dlt&numbers=${numbers}`;
 
   try {
     const response = await fetch(url, {
-      method: 'GET',
+      method: "GET",
     });
     const data = await response.json();
-    
+
     if (response.ok) {
       return { success: true, data };
     } else {
-      return { success: false, error: data.message || 'Failed to send SMS' };
+      return { success: false, error: data.message || "Failed to send SMS" };
     }
   } catch (error) {
-    return { success: false, error: error.message || 'An error occurred' };
+    return { success: false, error: error.message || "An error occurred" };
   }
 };
 
