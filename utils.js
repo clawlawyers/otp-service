@@ -31,7 +31,7 @@ const sendBulkSMS = async (otp, website, numbers) => {
   // }&message=${encodeURIComponent(
   //   message
   // )}&language=english&route=q&numbers=${numbers.join(",")}`;
-  const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${process.env.FAST2SMS_API_KEY}&sender_id=CLAWLG&message=176131&variables_values=${website}|${otp}&route=dlt&numbers=${numbers}`;
+  const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${process.env.FAST2SMS_API_KEY}&sender_id=CLAWLG&message=176973&variables_values=${otp}|${website}&route=dlt&numbers=${numbers}`;
 
   try {
     const response = await fetch(url, {
